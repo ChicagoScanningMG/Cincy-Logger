@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" class="h-100">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Michael J. Gerrity | MichaelJGerrity.com">
+    <meta name="generator" content="Hugo 0.79.0">
+    <title>Video Logger</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/cover/">
+
+
+
+    <!-- Bootstrap core CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3/masking-input.js" data-autoinit="true"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.all.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@5.0.4/dark.min.css">
+<script src="JQColor.js"></script>
+
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      #loader {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, .75) url("https://i.imgur.com/zlY3REY.png") no-repeat center center; //include your spinner url
+        z-index: 10000
+      }
+
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="stylesheet.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+
+  </head>
+
+  <body class="text-white">
+
+    <div id="video-notes">
+
+      <div class="row">
+        <h2 class="page-header">Video Logger</h2>
+        <h1 id="home-btn"><a href="index.html" class="bi bi-house-door-fill" color="white"></a></h1>
+      </div>
+
+      <form id="contactForm" name="serverless-form" action="" method="POST">
+
+        <div class="row">
+          <label for="order-id" class="col-3">Order ID:</label>
+          <input type="text" id="order-id" name="order-id" class="col-9" placeholder="1234" required autocomplete="off">
+        </div>
+
+        <div class="row">
+          <label for="last-name" class="col-3">Last Name:</label>
+          <input type="text" id="last-name" name="last-name" class="col-9" placeholder="Smith" required autocomplete="off">
+        </div>
+
+        <div class="row">
+          <label for="tape-num" class="col-3">Tape #:</label>
+          <input type="text" id="tape-num" name="tape-num" class="col-9 resetAble" value="" required autocomplete="off">
+        </div>
+
+        <div class="row">
+          <label for="initials" class="col-3">Tech Initials:</label>
+          <input type="text" id="initials" name="initials" class="col-9" placeholder="CS" required autocomplete="off" style="max-width: 50px">
+        </div>
+
+        <div class="row">
+          <label for="qc-notes" class="col-3">QC Notes:</label>
+          <div class="col-9" style="padding: 0">
+            <p id="existing-qc-notes" class="pulled-detail"></p>
+            <textarea name="qc-notes" id="qc-notes" class="video-notes-field resetAble" rows="10" cols="30" value="" autocomplete="off"></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <label for="stop-time" class="col-3">Video Stopped:</label>
+          <!-- <input type="timecode" id="stop-time" name="stop-time" class="col-9 resetAble" value="" placeholder="XX:XX:XX" autocomplete="off"> -->
+          <input type="button" id="stop-timer-button" value="Stop Timer" class="col-4">
+          <div class="col-9" id="stop-timer-div" style="display: none">
+            <h1 class="" id="stop-timer">10:00</h1><input type="button" class="timer-button fa fa-input" id="stop-button" value="&#xf28d;"><input type="button" class="timer-button fa fa-input" id="restart-button" value="&#xf1da;">
+        </div>
+        </div>
+
+        <div class="row">
+          <label for="needs-review" class="col-3">Needs Review?:</label>
+          <input type="checkbox" id="needs-review" name="needs-review" class="col-1 resetAble move-left" autocomplete="off">
+
+          <label for="notes-only" class="col-3">Log Notes Only:</label>
+          <input type="checkbox" id="notes-only" name="notes-only" class="col-1 resetAble move-left" autocomplete="off">
+        </div>
+
+        <div class="row">
+          <label for="billing-notes" class="col-3">Notes:</label>
+          <select name="billing-notes" id="billing-notes" class="video-notes-field masked col-9 resetAble" style="width: auto">
+            <option value="" selected>None</option>
+            <option value="Blank Tape">Blank</option>
+            <option value="Copyright">Copyright</option>
+            <option value="Short Tape">Short</option>
+            <option value="Long Tape">Long</option>
+            <option value="Check Notes">Check Notes</option>
+          </select>
+        </div>
+
+        <div class="row">
+          <span class="col-3"></span>
+          <input type="submit" value="Submit" class="col-2">
+        </div>
+
+        <div class="row">
+          <span class="col-3"></span>
+          <input type="button" id="reset-btn" value="Reset" class="col-2">
+        </div>
+
+        <div class="row">
+          <span class="col-3"></span>
+          <p id="order-notes" class="pulled-detail col-9" style="padding: 0"></p>
+        </div>
+
+      </form>
+
+      <div class="row" id="version-num">
+        <p>Cincy v1.0 based on CS Logger v2.2.1</p>
+      </div>
+
+    </div>
+
+    <span id="loader"></span>
+
+    <script src="video-script.js"></script>
+  </body>
+
+<script>
+
+  function timecodeMask() {
+    var num = $(this).val().replace(/\D/g,'');
+    $(this).val(num.substring(0,2) + ':' + num.substring(2,4) + ':' + num.substring(4,6));
+    if ($("#stop-time").val() == "::"){
+
+      $("#stop-time").val("");
+
+    }
+  }
+  $('[type="timecode"]').keyup(timecodeMask);
+
+</script>
+
+
+
+
+</html>
